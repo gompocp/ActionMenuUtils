@@ -16,7 +16,7 @@ namespace ActionMenuUtils
     {
         public const string Name = "ActionMenuUtils";
         public const string Author = "gompo";
-        public const string Version = "1.3.1";
+        public const string Version = "1.3.3";
         public const string DownloadLink = "https://github.com/gompocp/ActionMenuUtils/releases";
     }
     public class Main : MelonMod
@@ -83,7 +83,7 @@ namespace ActionMenuUtils
                     AddResetAvatarButton();
                     AddInstanceRejoinButton();
                 });
-            }, "Help", helpIcon, ActionMenuAPI.Insertion.Post);
+            }, "Help", helpIcon);
         }
 
         private static void AddResetAvatarButton()
@@ -95,9 +95,8 @@ namespace ActionMenuUtils
                     actionMenuApi.CreateSubMenu(delegate
                     {
                         actionMenuApi.AddPedalToCustomMenu(delegate
-                        {
-                            ObjectPublicAbstractSealedApBoObApBoUnique.Method_Public_Static_Void_ApiAvatar_String_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar");
-                            //VRC.User.prop_User_0.Method_Public_Void_ApiAvatar_String_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar");
+                        {                                                                   //Can probably abuse this to force switch the quest avatar you are displaying.... *nice one vrc*
+                            ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null);
                         }, "Confirm Reset Avatar", resetAvatarIcon);
                     });
                 }, "Reset Avatar", resetAvatarIcon);
@@ -106,7 +105,7 @@ namespace ActionMenuUtils
             {
                 actionMenuApi.AddPedalToCustomMenu(delegate
                 {
-                    ObjectPublicAbstractSealedApBoObApBoUnique.Method_Public_Static_Void_ApiAvatar_String_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar");
+                    ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null);
                 }, "Reset Avatar", resetAvatarIcon);
             }
         }
@@ -156,7 +155,6 @@ namespace ActionMenuUtils
                 {
                     Respawn();
                 }, "Respawn", respawnIcon);
-
             }
         }
 
@@ -181,10 +179,8 @@ namespace ActionMenuUtils
                 {
                     RejoinInstance();
                 }, "Rejoin Instance", rejoinInstanceIcon);
-
             }
         }
-
 
         private static void Respawn()
         {

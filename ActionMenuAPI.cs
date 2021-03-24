@@ -346,7 +346,6 @@ namespace ActionMenuUtils
         }
         public static void OpenOptionsPost(ActionMenu __instance)
         {
-            MelonLogger.Msg("Opening Options");
             AddPedalsInList(optionsPagePost, __instance);
         }
         public static void OpenSDK2ExpressionPre(ActionMenu __instance)
@@ -398,7 +397,7 @@ namespace ActionMenuUtils
             return false;
         }
     
-        public class PedalStruct
+        internal class PedalStruct
         {
             public string text { get; set; }
             public Texture2D icon { get; set; }
@@ -412,7 +411,7 @@ namespace ActionMenuUtils
         }
 
     
-        public enum Insertion
+        internal enum Insertion
         {
             Pre,
             Post
@@ -420,7 +419,7 @@ namespace ActionMenuUtils
 
 
         // Note: anything to do with nameplates and menu size wont work till the new update
-        public enum ActionMenuPageType
+        internal enum ActionMenuPageType
         {
             Config,
             Emojis,
@@ -437,7 +436,7 @@ namespace ActionMenuUtils
         }
 
     }
-    public static class ExtensionMethods
+    internal static class ExtensionMethods
     {
         
         public static PedalOption AddOption(this ActionMenu menu)
