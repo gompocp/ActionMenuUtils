@@ -4,11 +4,13 @@ using System.Reflection;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using System.IO;
+using System.Linq;
 using UnityEngine.UI;
 using VRC.Core;
 using VRC.Animation;
 using VRC.SDKBase;
 using Harmony;
+using UnhollowerRuntimeLib.XrefScans;
 
 namespace ActionMenuUtils
 {
@@ -16,7 +18,7 @@ namespace ActionMenuUtils
     {
         public const string Name = "ActionMenuUtils";
         public const string Author = "gompo";
-        public const string Version = "1.3.3";
+        public const string Version = "1.3.4";
         public const string DownloadLink = "https://github.com/gompocp/ActionMenuUtils/releases";
     }
     public class Main : MelonMod
@@ -66,6 +68,7 @@ namespace ActionMenuUtils
             ModSettings.RegisterSettings();
             ModSettings.Apply();
             SetupButtons();
+            //_ = Utils.GetGoHomeDelegate;
         }
 
         public override void OnPreferencesLoaded() => ModSettings.Apply();
@@ -93,21 +96,15 @@ namespace ActionMenuUtils
                 actionMenuApi.AddPedalToCustomMenu(delegate
                 {
                     actionMenuApi.CreateSubMenu(delegate
-                    {
-                        actionMenuApi.AddPedalToCustomMenu(delegate
-                        {                                                                   //Can probably abuse this to force switch the quest avatar you are displaying.... *nice one vrc*
-                            ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null);
-                        }, "Confirm Reset Avatar", resetAvatarIcon);
+                    {                                                                                                                       //Definitely abusable to set your own quest avatar
+                        actionMenuApi.AddPedalToCustomMenu(()=> ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null)
+                        , "Confirm Reset Avatar", resetAvatarIcon);
                     });
                 }, "Reset Avatar", resetAvatarIcon);
             }
             else
-            {
-                actionMenuApi.AddPedalToCustomMenu(delegate
-                {
-                    ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null);
-                }, "Reset Avatar", resetAvatarIcon);
-            }
+                actionMenuApi.AddPedalToCustomMenu(() => ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null)
+                    , "Reset Avatar", resetAvatarIcon);
         }
 
         private static void AddGoHomeButton()
@@ -118,20 +115,12 @@ namespace ActionMenuUtils
                 {
                     actionMenuApi.CreateSubMenu(delegate
                     {
-                        actionMenuApi.AddPedalToCustomMenu(delegate
-                        {
-                            GameObject.Find("UserInterface/QuickMenu/ShortcutMenu/GoHomeButton").GetComponent<Button>().onClick.Invoke();
-                        }, "Confirm Go Home", goHomeIcon);
+                        actionMenuApi.AddPedalToCustomMenu(() => GoHome(), "Confirm Go Home", goHomeIcon);
                     });
                 }, "Go Home", goHomeIcon);
             }
             else
-            {
-                actionMenuApi.AddPedalToCustomMenu(delegate
-                {
-                    GameObject.Find("UserInterface/QuickMenu/ShortcutMenu/GoHomeButton").GetComponent<Button>().onClick.Invoke();
-                }, "Go Home", goHomeIcon);
-            }
+                actionMenuApi.AddPedalToCustomMenu(() => GoHome(), "Go Home", goHomeIcon);
         }
 
         private static void AddRespawnButton()
@@ -142,20 +131,12 @@ namespace ActionMenuUtils
                 {
                     actionMenuApi.CreateSubMenu(delegate
                     {
-                        actionMenuApi.AddPedalToCustomMenu(delegate
-                        {
-                            Respawn();
-                        }, "Confirm Respawn", respawnIcon);
+                        actionMenuApi.AddPedalToCustomMenu(() => Respawn(), "Confirm Respawn", respawnIcon);
                     });
                 }, "Respawn", respawnIcon);
             }
             else
-            {
-                actionMenuApi.AddPedalToCustomMenu(delegate
-                {
-                    Respawn();
-                }, "Respawn", respawnIcon);
-            }
+                actionMenuApi.AddPedalToCustomMenu(() => Respawn(), "Respawn", respawnIcon);
         }
 
         private static void AddInstanceRejoinButton()
@@ -166,20 +147,12 @@ namespace ActionMenuUtils
                 {
                     actionMenuApi.CreateSubMenu(delegate
                     {
-                        actionMenuApi.AddPedalToCustomMenu(delegate
-                        {
-                            RejoinInstance();
-                        }, "Confirm Instance Rejoin", rejoinInstanceIcon);
+                        actionMenuApi.AddPedalToCustomMenu(() => RejoinInstance(), "Confirm Instance Rejoin", rejoinInstanceIcon);
                     });
                 }, "Rejoin Instance", rejoinInstanceIcon);
             }
             else
-            {
-                actionMenuApi.AddPedalToCustomMenu(delegate
-                {
-                    RejoinInstance();
-                }, "Rejoin Instance", rejoinInstanceIcon);
-            }
+                actionMenuApi.AddPedalToCustomMenu(() => RejoinInstance(), "Rejoin Instance", rejoinInstanceIcon);
         }
 
         private static void Respawn()
@@ -192,5 +165,41 @@ namespace ActionMenuUtils
             var instance = RoomManager.field_Internal_Static_ApiWorldInstance_0;
             Networking.GoToRoom($"{instance.instanceWorld.id}:{instance.idWithTags}");
         }
+
+        private static void GoHome()
+        {
+            if (ModSettings.forceGoHome)
+                Utils.GoHome();
+            else
+                GameObject.Find("UserInterface/QuickMenu/ShortcutMenu/GoHomeButton").GetComponent<Button>().onClick.Invoke();
+        }
+    }
+
+    static class Utils
+    {
+        //Gracefully taken from Advanced Invites https://github.com/Psychloor/AdvancedInvites/blob/master/AdvancedInvites/Utilities.cs#L356
+        public static bool XRefScanFor(this MethodBase methodBase, string searchTerm)
+        {
+            return XrefScanner.XrefScan(methodBase).Any(
+                xref => xref.Type == XrefType.Global && xref.ReadAsObject()?.ToString().IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        public static GoHomeDelegate GetGoHomeDelegate
+        {
+            get
+            {
+                if (goHomeDelegate != null) return goHomeDelegate;
+                MethodInfo goHomeMethod = typeof(VRCFlowManager).GetMethods(BindingFlags.Public | BindingFlags.Instance).First(
+                    m => m.GetParameters().Length == 0 && m.XRefScanFor("Going to Home Location: "));
+
+                goHomeDelegate = (GoHomeDelegate)Delegate.CreateDelegate(
+                    typeof(GoHomeDelegate),
+                    VRCFlowManager.prop_VRCFlowManager_0,
+                    goHomeMethod);
+                return goHomeDelegate;
+            }
+        }
+        public static void GoHome() => GetGoHomeDelegate();
+        private static GoHomeDelegate goHomeDelegate;
+        public delegate void GoHomeDelegate();
     }
 }
