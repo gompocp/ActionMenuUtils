@@ -1,4 +1,4 @@
-# Action Menu Utils ![Downloads](https://img.shields.io/github/downloads/gompocp/ActionMenuUtils/total?color=darkgreen) ![Current Version](https://img.shields.io/github/v/release/gompocp/ActionMenuUtils?color=blue)<br>
+# Action Menu Utils ![Current Version](https://img.shields.io/github/v/release/gompocp/ActionMenuUtils?color=blue)<br>
 - Lets you respawn using the action menu<br>
 - Lets you go home for when respawning wont save you such as in broken worlds with no floor<br>
 - Additionally lets you reset avatar or rejoin instance<br>
