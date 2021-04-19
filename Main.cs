@@ -189,7 +189,7 @@ namespace ActionMenuUtils
             {
                 if (goHomeDelegate != null) return goHomeDelegate;
                 MethodInfo goHomeMethod = typeof(VRCFlowManager).GetMethods(BindingFlags.Public | BindingFlags.Instance).First(
-                    m => m.GetParameters().Length == 0 && m.XRefScanFor("Going to Home Location: "));
+                    m => m.GetParameters().Length == 0 && m.ReturnType == typeof(void) && m.XRefScanFor("Going to Home Location: "));
 
                 goHomeDelegate = (GoHomeDelegate)Delegate.CreateDelegate(
                     typeof(GoHomeDelegate),
