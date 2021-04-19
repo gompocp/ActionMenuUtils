@@ -18,7 +18,7 @@ namespace ActionMenuUtils
     {
         public const string Name = "ActionMenuUtils";
         public const string Author = "gompo";
-        public const string Version = "1.3.4";
+        public const string Version = "1.3.5";
         public const string DownloadLink = "https://github.com/gompocp/ActionMenuUtils/releases";
     }
     public class Main : MelonMod
