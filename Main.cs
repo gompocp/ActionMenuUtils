@@ -5,6 +5,7 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using System.IO;
 using System.Linq;
+using ActionMenuApi;
 using UnityEngine.UI;
 using VRC.Core;
 using VRC.Animation;
@@ -18,7 +19,7 @@ namespace ActionMenuUtils
     {
         public const string Name = "ActionMenuUtils";
         public const string Author = "gompo";
-        public const string Version = "1.3.5";
+        public const string Version = "1.3.6";
         public const string DownloadLink = "https://github.com/gompocp/ActionMenuUtils/releases";
     }
     public class Main : MelonMod
@@ -63,12 +64,69 @@ namespace ActionMenuUtils
             catch (Exception e) {
                 MelonLogger.Warning("Consider checking for newer version as mod possibly no longer working, Exception occured OnAppStart(): " + e.Message);
             }
-            // Creates new Api instance and patches all required methods if found 
-            actionMenuApi = new ActionMenuAPI();
             ModSettings.RegisterSettings();
             ModSettings.Apply();
-            SetupButtons();
-            //_ = Utils.GetGoHomeDelegate;
+            if(MelonHandler.Mods.Any(m => m.Info.Name.Equals("ActionMenuApi"))) {
+                if (MelonHandler.Mods.Single(m => m.Info.Name.Equals("ActionMenuApi")).Info.Version.Equals("0.1.0")) MelonLogger.Warning("ActionMenuApi Outdated. 0.1.0 is not supported");
+                else SetupButtonsForAMAPI();
+            }
+            else
+            {
+                actionMenuApi = new ActionMenuAPI();
+                SetupButtons();
+            }
+        }
+
+        private static void SetupButtonsForAMAPI()
+        {
+            AMAPI.AddSubMenuToMenu(ActionMenuPageType.Options, "SOS",
+                () => {
+                    if (ModSettings.confirmRespawn)
+                    {
+                        AMAPI.AddSubMenuToSubMenu("Respawn", 
+                            () => {
+                                AMAPI.AddButtonPedalToSubMenu("Confirm Respawn",Respawn, respawnIcon);
+                            }, respawnIcon
+                        );
+                    }
+                    else
+                        AMAPI.AddButtonPedalToSubMenu("Respawn",Respawn, respawnIcon);
+                    
+                    if (ModSettings.confirmAvatarReset)
+                    {
+                        AMAPI.AddSubMenuToSubMenu("Reset Avatar", 
+                            () => {
+                                AMAPI.AddButtonPedalToSubMenu("Confirm Reset Avatar",() =>  ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null), resetAvatarIcon);
+                            }, resetAvatarIcon
+                        );
+                    }
+                    else
+                        AMAPI.AddButtonPedalToSubMenu("Reset Avatar",() =>  ObjectPublicAbstractSealedApBoApObStBoApApUnique.Method_Public_Static_Void_ApiAvatar_String_ApiAvatar_0(API.Fetch<ApiAvatar>("avtr_c38a1615-5bf5-42b4-84eb-a8b6c37cbd11"), "fallbackAvatar", null), resetAvatarIcon);
+                   
+                    if (ModSettings.confirmAvatarReset)
+                    {
+                        AMAPI.AddSubMenuToSubMenu("Rejoin Instance", 
+                            () => {
+                                AMAPI.AddButtonPedalToSubMenu("Confirm Instance Rejoin",RejoinInstance, resetAvatarIcon);
+                            }, resetAvatarIcon
+                        );
+                    }
+                    else
+                        AMAPI.AddButtonPedalToSubMenu("Rejoin Instance",RejoinInstance, resetAvatarIcon);
+                    
+                    if (ModSettings.confirmGoHome)
+                    {
+                        AMAPI.AddSubMenuToSubMenu("Go Home", 
+                            () => {
+                                AMAPI.AddButtonPedalToSubMenu("Confirm Go Home",GoHome, goHomeIcon);
+                            }, goHomeIcon
+                        );
+                    }
+                    else
+                        AMAPI.AddButtonPedalToSubMenu("Go Home",GoHome, goHomeIcon);
+
+                }, helpIcon
+            );
         }
 
         public override void OnPreferencesLoaded() => ModSettings.Apply();

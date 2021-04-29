@@ -17,3 +17,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion(ModInfo.Version)]
 [assembly: MelonInfo(typeof(ActionMenuUtils.Main), ModInfo.Name, ModInfo.Version, ModInfo.Author, ModInfo.DownloadLink)]
 [assembly: MelonGame("VRChat", "VRChat")]
+[assembly: MelonOptionalDependencies("ActionMenuApi")]
