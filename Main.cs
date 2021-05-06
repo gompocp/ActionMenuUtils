@@ -6,6 +6,7 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using ActionMenuApi;
+using ActionMenuApi.Types;
 using UnityEngine.UI;
 using VRC.Core;
 using VRC.Animation;
@@ -19,7 +20,7 @@ namespace ActionMenuUtils
     {
         public const string Name = "ActionMenuUtils";
         public const string Author = "gompo";
-        public const string Version = "1.3.6";
+        public const string Version = "1.3.7";
         public const string DownloadLink = "https://github.com/gompocp/ActionMenuUtils/releases";
     }
     public class Main : MelonMod
