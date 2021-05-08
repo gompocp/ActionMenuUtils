@@ -1,3 +1,7 @@
+# Archive Notice
+
+For ease of use (and my sanity) I've moved this mod to another repo [here](https://github.com/gompocp/VRChatMods) with the rest of my mods so I don't need a seperate solution for each mod
+
 # Action Menu Utils ![Downloads](https://img.shields.io/github/downloads/gompocp/ActionMenuUtils/total?color=darkgreen) ![Current Version](https://img.shields.io/github/v/release/gompocp/ActionMenuUtils?color=blue)<br>
 - Lets you respawn using the action menu<br>
 - Lets you go home for when respawning wont save you such as in broken worlds with no floor<br>
